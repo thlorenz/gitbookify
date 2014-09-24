@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Generates gitbook chapters and sections from a given markdown file.",
   "main": "index.js",
+  "bin": {
+    "gitbookify": "bin/gitbookify.js"
+  },
   "scripts": {
     "test": "tap test/*.js"
   },
@@ -12,6 +15,7 @@
   },
   "homepage": "https://github.com/thlorenz/gitbookify",
   "dependencies": {
+    "minimist": "~1.1.0",
     "mkdirp": "~0.5.0",
     "npmlog": "~0.1.1",
     "runnel": "~0.5.2"

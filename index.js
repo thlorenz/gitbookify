@@ -66,6 +66,7 @@ var createSummary = exports.createSummary = function createSummary (slides) {
 }
 
 function writeChapters(tgt, slides, cb) {
+  log.info('gitbookify', 'Writing gitbook chapters');
   var currentChapter = null
     , currentSection = 0
 
@@ -73,13 +74,13 @@ function writeChapters(tgt, slides, cb) {
     var filename;
 
     if (currentChapter && currentChapter === slide.chapter) {
-      log.info('gitbookfiy', 'Adding section %d to chapter %s', currentSection, slide.chapter);
+      log.verbose('gitbookfiy', 'Adding section %d to chapter %s', currentSection, slide.chapter);
       currentSection++;
       filename = path.join(tgt, slide.chapter, slide.chapter + '_' + currentSection + '.md');
       return fs.writeFile(filename, slide.content.join('\n'), 'utf8', cb_);
     }
 
-    log.info('gitbookify', 'Creating new chapter', slide.chapter)
+    log.verbose('gitbookify', 'Creating new chapter', slide.chapter)
 
     currentChapter = slide.chapter;
     currentSection = 0;
