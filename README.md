@@ -48,6 +48,47 @@ when you open the particular page in the gitbook.
 -->
 ```
 
+## Images
+
+There are two ways to add images to your gitbook.
+
+### Linking Remote URLS
+
+That is easy since they take absolute paths like `https://path.to/img.png` and work at all times.
+
+**Disadvantage**: You have to be online when presenting/reading the book and as we all know good network is not a given
+at conferences
+
+### Linking to Local Directory
+
+You can also link to a directory relative to the markdown file you create, i.e. `img/my-image.png`. 
+
+The problem is that the resulting pages of the book are placed somewhere else and cannot find that `img` directory. In
+order to fix that use this simple function in order to create softlinks from each book page to the main `img` directory.
+
+```sh
+link_img() {
+  for D in *; do
+    if [ -d "${D}" ]; then
+      ln -s ../../img $D/img
+    fi
+  done
+}
+```
+
+You can then use it in your script that builds the book:
+
+```sh
+rm -rf ./gitbook
+gitbookify slides.md -o gitbook      && \
+  rm -rf ./book                      && \
+  gitbook build ./gitbook -o  ./book && \
+  cd ./book                          && \
+  link_img
+```
+
+[here is a full example](https://github.com/thlorenz/talks/blob/e27198bc7ded08bb9513b47d510c8f01db51ce90/memory-profiling/build.sh) of such script.
+
 ## License
 
 MIT
