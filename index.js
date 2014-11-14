@@ -12,13 +12,72 @@ exports = module.exports = function gitbookify(file, tgt, cb) {
   fs.readFile(file, 'utf8', function onread(err, md) {
     if (err) return cb(err);
     var slides = deserialize(md);
+
     writeout(tgt, slides, cb);
   })
 }
 
+var activateSpeakerNotes = exports.activateSpeakerNotes = function activateSpeakerNotes (lines) {
+  var res = [], notes, line, inNotes, lastLine;
+
+  function insertNotes() {
+    res = res.concat([
+        '<script>'
+      , 'typeof console.clear === \'function\' && console.clear()'
+      , 'console.log('
+      , 'function speakerNotes() {'
+      , '/*'
+      ])
+      .concat(notes)
+      .concat([
+      , '*/}'
+      , '.toString().split(\'\\n\').slice(2, -1).join(\'\\n\'))'
+      , '</script>'
+      ]
+    )
+  }
+
+  var len = lines.length
+
+  for (var i = 0; i < len; i++) {
+    line = lines[i];
+    lastLine = i + 1 === len;
+
+    if (inNotes) {
+      // we reached closing comment of notes
+      if ((/^ *-->/).test(line)) {
+        insertNotes();
+        inNotes = false;
+        continue;
+      }
+
+      // Someone forgot to close the notes comment
+      if (lastLine) throw new Error('Never found closing comment of notes ' + notes.join('\n'));
+
+      // this is a line inside a notes comment
+      notes.push(line);
+      continue;
+    }
+
+    // outside notes
+
+    // is this line a notes start comment? 
+    if ((/^ *<!-- *notes/).test(line)) {
+      notes = [];
+      inNotes = true;
+      continue;
+    }
+
+    // just a normal line outside notes
+    res.push(line);
+  }
+
+  return res;
+}
+
 var deserialize = exports.deserialize = function deserialize(md) {
-  var lines = md.split('\n')
   var slides = [], i = 0, currentSlide, chapter;
+  var lines = activateSpeakerNotes(md.split('\n'))
 
   // ignore everything up to first header (including empty lines)
   while (!regex.test(lines[i])) i++;
@@ -136,10 +195,6 @@ var writeout =  exports.writeout = function writeout(tgt, slides, cb) {
 
 // Test
 if (!module.parent && typeof window === 'undefined') {
-  var file = __dirname + '/test/fixtures/addon-slides.md';
-  var tgt = __dirname + '/test/results/addon-slides';
-  exports(file, tgt,  function (err) {
-    if (err) return console.error(err);
-    log.info('gitbookify', 'Done')  
-  })
+  var file = __dirname + '/test/fixtures/speaker-notes.md';
+  console.log(activateSpeakerNotes(fs.readFileSync(file, 'utf8').split('\n')));
 }

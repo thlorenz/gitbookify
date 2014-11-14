@@ -6,7 +6,7 @@ Generates gitbook chapters and sections from a given markdown file.
 
     npm install -g gitbookify
 
-### Usage
+## Usage
 
 ```
 gitbookify <file.md> --outdir <outdir> <gitbookify options>
@@ -35,6 +35,18 @@ more info [review this example](https://raw.githubusercontent.com/thlorenz/gitbo
 
 After generating the chapters you can use [gitbook](https://github.com/GitbookIO/gitbook) to either serve them `gitbook
 serve ./my-gitbook` or [do all the other gitbook things](https://github.com/GitbookIO/gitbook#how-to-use-it).
+
+## Speaker Notes
+
+Simply enclose your speaker notes in a `notes` comment as shown below. The notes will be printed to the browser console
+when you open the particular page in the gitbook.
+
+```html
+<!-- notes
+- first speaker note
+  - indented sub note
+-->
+```
 
 ## License
 
