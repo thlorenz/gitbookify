@@ -1,6 +1,6 @@
 {
   "name": "gitbookify",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generates gitbook chapters and sections from a given markdown file.",
   "main": "index.js",
   "bin": {
